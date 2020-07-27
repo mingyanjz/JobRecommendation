@@ -10,6 +10,8 @@ import java.io.PrintWriter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import external.GitHubClient;
+
 /**
  * Servlet implementation class SearchItem
  */
@@ -46,13 +48,20 @@ public class SearchItem extends HttpServlet {
 		
 		//test, return a JSON array
 //		PrintWriter writer = response.getWriter();
-		JSONArray array = new JSONArray();
-		array.put(new JSONObject().put("name","test user"));
-		array.put(new JSONObject().put("age", "25"));
+//		JSONArray array = new JSONArray();
+//		array.put(new JSONObject().put("name","test user"));
+//		array.put(new JSONObject().put("age", "25"));
 //		writer.print(array);
 		
 		//test, return a JSON array using helper
-		RpcHelper.writeJsonArrayToResponse(response, array);
+//		RpcHelper.writeJsonArrayToResponse(response, array);
+		
+		//get the latitude and  and longitude from user's request 
+		double lat = Double.parseDouble(request.getParameter("lat"));
+		double lon = Double.parseDouble(request.getParameter("lon"));
+		GitHubClient gitHubClient = new GitHubClient();
+		//use search function in GitHubClient and return the result as a JSON Array.
+		RpcHelper.writeJsonArrayToResponse(response, gitHubClient.search(lat, lon, null));
 	}
 
 	/**
