@@ -2,6 +2,8 @@ package external;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -12,12 +14,16 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
+import org.json.JSONObject;
+
+import entity.Item;
+
 
 public class GitHubClient {
 	private static final String URL_TEMPLATE = "https://jobs.github.com/positions.json?description=%s&lat=%s&long=%s";
 	private static final String DEFAULT_KEYWORD = "developer";
 	//provide latitude, longitude and job keywords, return search result as a JSONArray 
-	public JSONArray search(double lat, double lon, String keyword) {
+	public List<Item> search(double lat, double lon, String keyword) {
 		if (keyword == null) {
 			keyword = DEFAULT_KEYWORD;
 		}
@@ -31,22 +37,22 @@ public class GitHubClient {
 		
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		//http response handler
-		ResponseHandler<JSONArray> responseHandler = new ResponseHandler<JSONArray>() {
+		ResponseHandler<List<Item>> responseHandler = new ResponseHandler<List<Item>>() {
 			@Override
-			public JSONArray handleResponse(final HttpResponse response) throws IOException {
+			public List<Item> handleResponse(final HttpResponse response) throws IOException {
 				//handle wrong status code
 				if (response.getStatusLine().getStatusCode() != 200) {
-					return new JSONArray();
+					return new ArrayList<>();
 				}
 				HttpEntity entity = response.getEntity();
 				//handle null response
 				if (entity == null) {
-					return new JSONArray();
+					return new ArrayList<>();
 				}
 				//convert entity to string
 				String responseString = EntityUtils.toString(entity);
 				//construct  JSON array form the JSON format string
-				return new JSONArray(responseString);
+				return getItemList(new JSONArray(responseString));
 			}
 		};
 		//send http get request and handle the response;
@@ -57,6 +63,26 @@ public class GitHubClient {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return new JSONArray();
+		return new ArrayList<>();
 	}
+	
+	private List<Item> getItemList(JSONArray array) {
+		List<Item> itemList = new ArrayList<>();
+		for (int i = 0; i < array.length(); i++) {
+			JSONObject obj = array.getJSONObject(i);
+			Item item = Item.builder()
+					.setImageUrl(getStringFieldOrEmpty(obj, "company_logo"))
+					.setItemId(getStringFieldOrEmpty(obj, "id"))
+					.setName(getStringFieldOrEmpty(obj, "tiltle"))
+					.setAddress(getStringFieldOrEmpty(obj, "location"))
+					.setUrl(getStringFieldOrEmpty(obj, "url"))
+					.build();
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	private String getStringFieldOrEmpty(JSONObject obj, String field) {
+		return obj.isNull(field) ? "" : obj.getString(field);
+	}
+
 }

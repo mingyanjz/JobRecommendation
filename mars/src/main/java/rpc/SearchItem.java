@@ -6,10 +6,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import entity.Item;
 import external.GitHubClient;
 
 /**
@@ -61,7 +63,15 @@ public class SearchItem extends HttpServlet {
 		double lon = Double.parseDouble(request.getParameter("lon"));
 		GitHubClient gitHubClient = new GitHubClient();
 		//use search function in GitHubClient and return the result as a JSON Array.
-		RpcHelper.writeJsonArrayToResponse(response, gitHubClient.search(lat, lon, null));
+		//RpcHelper.writeJsonArrayToResponse(response, gitHubClient.search(lat, lon, null));
+		//get item list from github client
+		List<Item> itemList = gitHubClient.search(lat, lon, null);
+		JSONArray array = new JSONArray();
+		for (int i = 0; i < itemList.size(); i++) {
+			array.put(itemList.get(i).toJSONObject());
+		}
+		RpcHelper.writeJsonArrayToResponse(response, array);
+
 	}
 
 	/**
