@@ -39,7 +39,7 @@ public class Item {
 	public Set<String> getKeywords() {
 		return keywords;
 	}
-	public String getTiltle() {
+	public String getName() {
 		return name;
 	}
 	public String getUrl() {
