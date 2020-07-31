@@ -46,7 +46,7 @@ public class MySQLDBConnection {
 
 	}
 
-	private Set<String> getFavoriteItemId(String userId) {
+	public Set<String> getFavoriteItemId(String userId) {
 		Set<String> itemIds = new HashSet<>();
 		// check if connected to data base
 		if (conn == null) {
@@ -95,7 +95,7 @@ public class MySQLDBConnection {
 		return items;
 	}
 
-	private Set<String> getKeywords(String itemId) {
+	public Set<String> getKeywords(String itemId) {
 		Set<String> keywords = new HashSet<>();
 		// check if connected to data base
 		if (conn == null) {
@@ -108,7 +108,7 @@ public class MySQLDBConnection {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, itemId);
 			ResultSet rs = statement.executeQuery();
-			while (!rs.next()) {
+			while (rs.next()) {
 				keywords.add(rs.getString("keyword"));
 			}
 		} catch (Exception e) {

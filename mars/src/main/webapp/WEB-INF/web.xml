@@ -46,7 +46,7 @@
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>RecommendItem</servlet-name>
-  	<url-pattern>/recommend</url-pattern>
+  	<url-pattern>/recommendation</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
   	<servlet-name>ItemHistory</servlet-name>
