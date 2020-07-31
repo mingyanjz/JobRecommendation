@@ -5,12 +5,15 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import java.io.PrintWriter;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import dataBase.MySQLDBConnection;
 import entity.Item;
 import external.GitHubClient;
 
@@ -57,6 +60,14 @@ public class SearchItem extends HttpServlet {
 		
 		//test, return a JSON array using helper
 //		RpcHelper.writeJsonArrayToResponse(response, array);
+		
+		//verify session
+		HttpSession session = request.getSession(false);
+		if (session == null) {	
+			//not logged in
+			response.setStatus(403);
+			return;
+		}
 		
 		//get the latitude and  and longitude from user's request 
 		double lat = Double.parseDouble(request.getParameter("lat"));
