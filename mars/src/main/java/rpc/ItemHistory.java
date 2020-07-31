@@ -1,12 +1,15 @@
 package rpc;
 
 import java.io.IOException;
+import java.util.Set;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import dataBase.MySQLDBConnection;
@@ -30,7 +33,14 @@ public class ItemHistory extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		MySQLDBConnection conn = new MySQLDBConnection();
+		String userId = request.getParameter("user_id");
+		Set<Item> items = conn.getFavoriteItem(userId);
+		JSONArray array = new JSONArray();
+		for (Item item : items) {
+			array.put(item.toJSONObject());
+		}
+		RpcHelper.writeJsonArrayToResponse(response, array);
 	}
 
 	/**
@@ -39,9 +49,9 @@ public class ItemHistory extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		MySQLDBConnection conn = new MySQLDBConnection();
 		JSONObject obj = new JSONObject(IOUtils.toString(request.getReader()));
-		String user_id = obj.getString("user_id");
+		String userId = obj.getString("user_id");
 		Item item = RpcHelper.JSONObjectToItem(obj.getJSONObject("favorite"));
-		conn.addFavorite(user_id, item);
+		conn.addFavorite(userId, item);
 		conn.close();
 	}
 	
@@ -51,9 +61,9 @@ public class ItemHistory extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		MySQLDBConnection conn = new MySQLDBConnection();
 		JSONObject obj = new JSONObject(IOUtils.toString(request.getReader()));
-		String user_id = obj.getString("user_id");
+		String userId = obj.getString("user_id");
 		Item item = RpcHelper.JSONObjectToItem(obj.getJSONObject("favorite"));
-		conn.removeFavorite(user_id, item);
+		conn.removeFavorite(userId, item);
 		conn.close();
 	}
 }
