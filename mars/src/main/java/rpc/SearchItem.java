@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Set;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -72,14 +73,20 @@ public class SearchItem extends HttpServlet {
 		//get the latitude and  and longitude from user's request 
 		double lat = Double.parseDouble(request.getParameter("lat"));
 		double lon = Double.parseDouble(request.getParameter("lon"));
+		String userId = request.getParameter("user_id");
 		GitHubClient gitHubClient = new GitHubClient();
 		//use search function in GitHubClient and return the result as a JSON Array.
 		//RpcHelper.writeJsonArrayToResponse(response, gitHubClient.search(lat, lon, null));
 		//get item list from github client
 		List<Item> itemList = gitHubClient.search(lat, lon, null);
+		MySQLDBConnection connection = new MySQLDBConnection();
+		Set<String> favoritedItemIds = connection.getFavoriteItemId(userId);
+		connection.close();
 		JSONArray array = new JSONArray();
 		for (int i = 0; i < itemList.size(); i++) {
-			array.put(itemList.get(i).toJSONObject());
+			JSONObject obj = itemList.get(i).toJSONObject();
+			obj.put("favorite", favoritedItemIds.contains(obj.getString("item_id")));
+			array.put(obj);
 		}
 		RpcHelper.writeJsonArrayToResponse(response, array);
 
