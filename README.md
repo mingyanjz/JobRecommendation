@@ -1,16 +1,16 @@
 # JobRecommendation
 
-##register an acount
+## Register an acount
 ![alt text](register.png)
 
-##login in
+## Login in
 ![alt text](login.png)
 
-##search for nearby available jobs
+## Search for nearby available jobs
 ![alt text](search.png)
 
-##view favorited jobs
+## View favorited jobs
 ![alt text](favorited.png)
 
-##get personalized job recommendation
+## Personalized job recommendation
 ![alt text](recommend.png)
