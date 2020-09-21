@@ -249,7 +249,7 @@
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(onPositionUpdated,
                 onLoadPositionFailed, {
-                    timeout: 50000,
+                    timeout: 30000,
                     maximumAge : 60000,
                 });
             showLoadingMessage('Retrieving your location...');
@@ -431,8 +431,8 @@
      * @returns {Element}
      */
     function $create(tag, options) {
-        var element = document.createElement(tag);
-        for ( var key in options) {
+        let element = document.createElement(tag);
+        for ( let key in options) {
             if (options.hasOwnProperty(key)) {
                 element[key] = options[key];
             }
@@ -450,10 +450,10 @@
      *            An array of item JSON objects
      */
     function listItems(items) {
-        var itemList = document.querySelector('#item-list');
+        let itemList = document.querySelector('#item-list');
         itemList.innerHTML = ''; // clear current results
 
-        for (var i = 0; i < items.length; i++) {
+        for (let i = 0; i < items.length; i++) {
             addItem(itemList, items[i]);
         }
     }
@@ -481,10 +481,10 @@
      * <div class="fav-link"> <i class="fa fa-heart"></i> </div> </li>
      */
     function addItem(itemList, item) {
-        var item_id = item.item_id;
+        let item_id = item.item_id;
 
         // create the <li> tag and specify the id and class attributes
-        var li = $create('li', {
+        let li = $create('li', {
             id : 'item-' + item_id,
             className : 'item'
         });
@@ -505,10 +505,10 @@
             }));
         }
         // section
-        var section = $create('div');
+        let section = $create('div');
 
         // title
-        var title = $create('a', {
+        let title = $create('a', {
             className : 'item-name',
             href : item.url,
             target : '_blank'
@@ -517,7 +517,7 @@
         section.appendChild(title);
 
         // keyword
-        var keyword = $create('p', {
+        let keyword = $create('p', {
             className : 'item-keyword'
         });
         keyword.innerHTML = 'Keyword: ' + item.keywords.join(', ');
@@ -526,7 +526,7 @@
         li.appendChild(section);
 
         // address
-        var address = $create('p', {
+        let address = $create('p', {
             className : 'item-address'
         });
 
@@ -536,7 +536,7 @@
         li.appendChild(address);
 
         // favorite link
-        var favLink = $create('p', {
+        let favLink = $create('p', {
             className : 'fav-link'
         });
 
@@ -561,32 +561,32 @@
      *            The id of the navigation button
      */
     function activeBtn(btnId) {
-        var btns = document.querySelectorAll('.main-nav-btn');
+        let btns = document.querySelectorAll('.main-nav-btn');
 
         // deactivate all navigation buttons
-        for (var i = 0; i < btns.length; i++) {
+        for (let i = 0; i < btns.length; i++) {
             btns[i].className = btns[i].className.replace(/\bactive\b/, '');
         }
 
         // active the one that has id = btnId
-        var btn = document.querySelector('#' + btnId);
+        let btn = document.querySelector('#' + btnId);
         btn.className += ' active';
     }
 
     function showLoadingMessage(msg) {
-        var itemList = document.querySelector('#item-list');
+        let itemList = document.querySelector('#item-list');
         itemList.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> '
             + msg + '</p>';
     }
 
     function showWarningMessage(msg) {
-        var itemList = document.querySelector('#item-list');
+        let itemList = document.querySelector('#item-list');
         itemList.innerHTML = '<p class="notice"><i class="fa fa-exclamation-triangle"></i> '
             + msg + '</p>';
     }
 
     function showErrorMessage(msg) {
-        var itemList = document.querySelector('#item-list');
+        let itemList = document.querySelector('#item-list');
         itemList.innerHTML = '<p class="notice"><i class="fa fa-exclamation-circle"></i> '
             + msg + '</p>';
     }

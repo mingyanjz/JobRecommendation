@@ -23,22 +23,27 @@ import entity.Item;
 
 public class GitHubClient {
 	private static final String URL_TEMPLATE = "https://jobs.github.com/positions.json?description=%s&lat=%s&long=%s";
+	private static final String URL_TEMPLATE_TWO = "https://jobs.github.com/positions.json?lat=%s&long=%s";
 	private static final String DEFAULT_KEYWORD = "developer";
-	private static final String URL_TEMPLATE_EXTEND = "https://jobs.github.com/positions.json?description=%s&location=CA";
+	private static final String URL_TEMPLATE_EXTEND = "https://jobs.github.com/positions.json?description=%s&location=us";
 
 	// provide latitude, longitude and job keywords, return search result as a
 	// JSONArray
 	public List<Item> search(double lat, double lon, String keyword) {
+		String GitHubUrl;
 		if (keyword == null) {
 			keyword = DEFAULT_KEYWORD;
+			GitHubUrl = String.format(URL_TEMPLATE_TWO, lat, lon);
+		} else {
+			try {
+				keyword = URLEncoder.encode(keyword, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			// generating UTL for GitHub Job API
+			GitHubUrl = String.format(URL_TEMPLATE, keyword, lat, lon);
 		}
-		try {
-			keyword = URLEncoder.encode(keyword, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		// generating UTL for GitHub Job API
-		String GitHubUrl = String.format(URL_TEMPLATE, keyword, lat, lon);
+		
 
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		// http response handler
@@ -78,7 +83,7 @@ public class GitHubClient {
 			return itemList;
 		}
 		
-		//not enough result, extends searching to CA
+		//not enough result, extends searching to US
 		GitHubUrl = String.format(URL_TEMPLATE_EXTEND, keyword);
 		httpclient = HttpClients.createDefault();	
 		List<Item> itemListEx = null;
